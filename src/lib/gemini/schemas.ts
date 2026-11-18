@@ -16,6 +16,7 @@ export const ChatRequestSchema = z.object({
       householdVulnerability: z.string().optional(),
       householdMembersCount: z.number().int().min(0).max(20).optional(),
       hasSensitiveMembers: z.boolean().optional(),
+      dataSource: z.string().optional(),
     })
     .optional(),
 });

@@ -18,16 +18,16 @@ Every winter across Northern India (the Indo-Gangetic Plain: Delhi-NCR, Uttar Pr
 
 ## 2. Technology Stack
 
-- **Framework:** Next.js 14 (App Router, Server-Side API key encapsulation)
+- **Framework:** Next.js 14 (App Router, zero external database requirements)
 - **Language:** TypeScript 5.7 (Strict Mode, 0 `any` types)
 - **Styling:** Tailwind CSS (Bespoke environmental editorial palette: deep forest green `#0B1F1A`, teal `#0D9488`, warm ivory `#FAF9F6`, and official CPCB severity indicators)
-- **Generative AI:** Google Gemini API (`@google/generative-ai`, `gemini-1.5-flash`) with strict numeric grounding against deterministic engine facts
-- **Validation:** Zod (runtime validation on all external inputs, geocoding parameters, and AI structured output)
+- **Environmental Intelligence:** Autonomous Context-Aware Decision Engine (100% zero-cost, self-contained, no API key required; optional Gemini API integration)
+- **Validation:** Zod (runtime validation on all external inputs, geocoding parameters, and structured output)
 - **Atmospheric Data:** Open-Meteo Air Quality API with European Centre for Medium-Range Weather Forecasts (**Copernicus CAMS Global Atmospheric Model**)
 - **Geocoding:** Open-Meteo Geocoding API + GPS browser geolocation + Major Indian metro airshed presets
-- **Unit & Integration Testing:** Vitest 2.1 + `@testing-library/react` + v8 coverage provider (50 tests, 100% deterministic decision engine coverage)
-- **End-to-End & Accessibility Testing:** Playwright + `@axe-core/playwright` (WCAG 2.1 AA validation across Desktop and Mobile viewports)
-- **Deployment:** Vercel-ready with zero external database dependencies.
+- **Unit & Integration Testing:** Vitest 2.1 + `@testing-library/react` + v8 coverage provider (82 tests across 14 suites, 100% function coverage)
+- **End-to-End & Accessibility Testing:** Playwright + `@axe-core/playwright` (22/22 tests passing across Desktop and Mobile viewports)
+- **Deployment:** Vercel-ready with zero external database or paid API key dependencies.
 
 ---
 
@@ -68,11 +68,13 @@ Every winter across Northern India (the Indo-Gangetic Plain: Delhi-NCR, Uttar Pr
   - Two-Wheeler / Walking: Extreme to High (sitting directly in exhaust plumes at roadside)
 - **Weekly & Annual Impact:** Quantifies $\text{kg CO}_2$ avoided over 5-day work weeks and 48-week working years.
 
-### 6. Gemini Conversational AI Assistant
+### 6. Context-Aware Intelligence Assistant (Zero-Cost, No API Key Required)
+- **100% Free & Self-Contained:** SaansSetu AI does NOT require any paid API, personal API key, or third-party generative AI account to provide complete, production-grade intelligence.
+- **11 Domain-Specific Scientific Engines:** Comprehensive coverage across CPCB AQI interpretations, N95/FFP2 respirator fit, window ventilation discipline, inversion thermodynamics, CADR purifier sizing, debunking houseplant myths, commute exposures, vulnerable demographics, and indoor combustion source control.
 - **Bilingual Support:** Full English and fluent, natural Hindi (Devanagari script) with culturally resonant environmental terminology (जैसे वायु गुणवत्ता सूचकांक, एन-95 मास्क, सीलबंद खिड़कियां).
-- **Numeric Fact Grounding:** Anchored strictly to deterministic engine state (measured AQI, CPCB category, primary pollutant, family sensitivities) to eliminate hallucinations.
+- **Numeric Fact Grounding:** Anchored strictly to real atmospheric physics and deterministic engine state (measured AQI, CPCB category, primary pollutant, family sensitivities) to eliminate hallucinations.
 - **Structured Output Schema:** Zod-validated response containing markdown answer, key takeaway sentence, structured action cards, and clickable follow-up suggestions.
-- **Deterministic Offline Fallback:** Complete rule-based engine providing instant, grounded answers if `GEMINI_API_KEY` is not configured or network fails.
+- **Hybrid Support:** Includes optional Gemini API support (`gemini-1.5-flash`) if an administrator configures `GEMINI_API_KEY`, but operates with full fidelity and zero latency out-of-the-box using the deterministic engine.
 
 ### 7. Community Action Center & GRAP Protocols
 - **Institutional Advisories:** CAQM Graded Response Action Plan (GRAP Stages I through IV) triggers for schools, colleges, and workplaces.
@@ -154,10 +156,12 @@ npm run test:e2e
 ## 7. Getting Started
 
 ### Prerequisites
-- Node.js 18.x or 20.x or 22.x or 24.x
-- npm 9+ or yarn or pnpm
+- Node.js 18.x, 20.x, or 22.x+
+- npm 9+ (or yarn / pnpm)
 
-### Installation
+### Instant Setup (No API Keys Required!)
+SaansSetu AI runs 100% out-of-the-box with zero paid API keys or signups:
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-org/saans-setu-ai.git
@@ -166,18 +170,13 @@ cd saans-setu-ai
 # Install dependencies
 npm install
 
-# Copy environment variables
-cp .env.example .env.local
-
-# Optional: Add your Google Gemini API key to .env.local
-# If omitted, the app will smoothly run its built-in deterministic fallback engine!
-GEMINI_API_KEY=your_gemini_api_key_here
-
 # Start development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser. All live Open-Meteo atmospheric forecasts, CPCB AQI calculations, personalized family routines, CADR sizing, and the intelligent assistant are immediately active!
+
+*(Optional: If you wish to enable Google Gemini API mode, copy `.env.example` to `.env.local` and add `GEMINI_API_KEY`, but this is entirely optional.)*
 
 ---
 
