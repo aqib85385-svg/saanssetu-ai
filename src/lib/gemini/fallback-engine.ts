@@ -222,6 +222,8 @@ export function generateFallbackResponse(req: ChatRequest): AiChatResponse {
   if (
     q.includes("plant") ||
     q.includes("पौधे") ||
+    q.includes("पौधा") ||
+    q.includes("प्लांट") ||
     q.includes("areca") ||
     q.includes("snake plant") ||
     q.includes("indoor plant")

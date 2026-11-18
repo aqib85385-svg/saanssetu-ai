@@ -51,7 +51,7 @@ export function DailyRoutinePlanner({
           <span>AI Daily Smog Defense Routine</span>
         </h2>
         <p className="text-xs text-stone-500 mt-1">
-          Synchronized to northern Indian diurnal smog dynamics, boundary layer inversions, and your family's profile
+          Synchronized to northern Indian diurnal smog dynamics, boundary layer inversions, and your family&apos;s profile
         </p>
       </div>
 

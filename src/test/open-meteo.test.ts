@@ -1,5 +1,6 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
+  fetchAirQualityData,
   getRealisticFallbackData,
   searchLocations,
   INDIAN_CITY_PRESETS,
@@ -29,5 +30,57 @@ describe("Open-Meteo Integration & Fallback Engine", () => {
     expect(data.current.source).toContain("Fallback");
     expect(data.hourly[13].hourFormatted).toBeDefined();
     expect(data.daily[0].dayOfWeek).toBeDefined();
+  });
+
+  it("parses valid CAMS Open-Meteo API response correctly", async () => {
+    const now = new Date();
+    const mockTimes: string[] = [];
+    const mockPm25: number[] = [];
+    const mockPm10: number[] = [];
+    const mockNo2: number[] = [];
+    const mockSo2: number[] = [];
+    const mockCo: number[] = [];
+    const mockO3: number[] = [];
+
+    // 48 hours of mock data
+    for (let i = 0; i < 48; i++) {
+      const d = new Date(now.getTime() + i * 3600 * 1000);
+      mockTimes.push(d.toISOString());
+      mockPm25.push(220);
+      mockPm10.push(340);
+      mockNo2.push(65);
+      mockSo2.push(20);
+      mockCo.push(1800); // 1.8 mg/m3
+      mockO3.push(45);
+    }
+
+    const mockResponse = {
+      hourly: {
+        time: mockTimes,
+        pm2_5: mockPm25,
+        pm10: mockPm10,
+        nitrogen_dioxide: mockNo2,
+        sulphur_dioxide: mockSo2,
+        carbon_monoxide: mockCo,
+        ozone: mockO3,
+      },
+    };
+
+    const fetchSpy = vi.spyOn(global, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => mockResponse,
+    } as unknown as Response);
+
+    // Use unique coordinates to bypass cache
+    const result = await fetchAirQualityData(26.85, 80.95, "Lucknow (Hazratganj)");
+    expect(result.location.name).toBe("Lucknow (Hazratganj)");
+    expect(result.current.pm25).toBe(220);
+    expect(result.current.co).toBe(1.8);
+    expect(result.hourly.length).toBeGreaterThan(0);
+    expect(result.daily.length).toBeGreaterThan(0);
+    expect(result.current.source).toContain("via Open-Meteo");
+    expect(result.current.source).toContain("CAMS");
+
+    fetchSpy.mockRestore();
   });
 });

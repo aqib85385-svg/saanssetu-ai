@@ -235,7 +235,7 @@ export function CommunityActionCenter({
             </div>
 
             <div className="text-[11px] text-stone-400 text-center">
-              Tap 'Copy Broadcast' and paste directly into WhatsApp or Telegram.
+              Tap &apos;Copy Broadcast&apos; and paste directly into WhatsApp or Telegram.
             </div>
           </Card>
         </div>

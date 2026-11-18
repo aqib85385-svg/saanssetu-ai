@@ -44,7 +44,7 @@ describe("Rule-Based Deterministic Fallback Engine", () => {
     expect(res.reply).toContain("इनवर्जन");
   });
 
-  it("truthfully debunks houseplant air filtration myth in fallback", () => {
+  it("truthfully debunks houseplant air filtration myth in fallback in English and Hindi", () => {
     const res = generateFallbackResponse({
       message: "Can indoor plants like Areca palm replace air purifiers?",
       language: "en",
@@ -53,6 +53,33 @@ describe("Rule-Based Deterministic Fallback Engine", () => {
     expect(res.reply.toLowerCase()).toContain("no");
     expect(res.reply.toLowerCase()).toContain("cadr");
     expect(res.keyTakeaway.toLowerCase()).toContain("not clean");
+
+    const resHi = generateFallbackResponse({
+      message: "क्या स्नेक प्लांट और मनी प्लांट घर की हवा साफ करते हैं?",
+      language: "hi",
+    });
+
+    expect(resHi.reply).toContain("नहीं");
+    expect(resHi.reply).toContain("HEPA");
+    expect(resHi.keyTakeaway).toContain("HEPA");
+  });
+
+  it("provides general English and Hindi briefing when no specific topic matches", () => {
+    const resEn = generateFallbackResponse({
+      message: "What is the general advice for today?",
+      language: "en",
+      context: { aqi: 340, locationName: "Faridabad", category: "Very Poor" },
+    });
+    expect(resEn.reply).toContain("Faridabad");
+    expect(resEn.reply).toContain("340");
+    expect(resEn.actionCards.length).toBeGreaterThan(0);
+
+    const resHi = generateFallbackResponse({
+      message: "आज का सामान्य सुझाव क्या है?",
+      language: "hi",
+      context: { aqi: 250, locationName: "वाराणसी", category: "Poor" },
+    });
+    expect(resHi.reply).toContain("वाराणसी");
   });
 
   it("handles window and ventilation queries in English and Hindi", () => {
