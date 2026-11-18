@@ -160,7 +160,7 @@ export function GeminiAssistant({
             <span>SaansSetu Conversational AI</span>
           </h2>
           <p className="text-xs text-stone-500 mt-0.5">
-            Grounded GenAI powered by Gemini with strict deterministic environmental guardrails
+            Context-aware environmental intelligence powered by scientific decision engines
           </p>
         </div>
 

@@ -164,7 +164,7 @@ SaansSetu AI runs 100% out-of-the-box with zero paid API keys or signups:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/saans-setu-ai.git
+git clone https://github.com/aqib85385-svg/saanssetu-ai.git
 cd saans-setu-ai
 
 # Install dependencies

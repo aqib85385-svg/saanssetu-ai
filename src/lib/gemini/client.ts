@@ -69,16 +69,29 @@ Respond with a JSON object matching this schema:
 
     const userPrompt = `User Query: """${req.message}"""`;
 
-    // 9 second timeout to prevent hanging user experience
+    // 9-second timeout double-guard to prevent hanging user requests
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 9000);
+    let timeoutId: NodeJS.Timeout | undefined;
 
-    const result = await model.generateContent({
-      contents: [
-        { role: "user", parts: [{ text: systemPrompt }, { text: userPrompt }] },
-      ],
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => {
+        controller.abort();
+        reject(new Error("Gemini API request timed out after 9 seconds"));
+      }, 9000);
     });
-    clearTimeout(timeoutId);
+
+    const result = await Promise.race([
+      model.generateContent(
+        {
+          contents: [
+            { role: "user", parts: [{ text: systemPrompt }, { text: userPrompt }] },
+          ],
+        },
+        { timeout: 9000, signal: controller.signal }
+      ),
+      timeoutPromise,
+    ]);
+    if (timeoutId) clearTimeout(timeoutId);
 
     const text = result.response.text();
     const parsedJson = JSON.parse(text);
