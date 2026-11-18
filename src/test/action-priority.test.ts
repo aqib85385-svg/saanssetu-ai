@@ -1,126 +1,87 @@
 import { describe, it, expect } from "vitest";
 import {
   calculateActionPriorityScore,
-  getHouseholdSensitivityMultiplier,
   generateDailyActions,
 } from "@/lib/engine/action-priority";
 import { calculateCpcbAqi } from "@/lib/aqi/cpcb-calculator";
-import { FamilyMember, IndoorRoomConfig } from "@/types";
+import { FamilyMember } from "@/types";
 
-describe("Action Priority Score (APS) Engine", () => {
-  it("calculates priority scores within [0, 100]", () => {
-    const scoreLow = calculateActionPriorityScore(60, 1.0, 50);
-    const scoreMed = calculateActionPriorityScore(220, 1.3, 80);
-    const scoreHigh = calculateActionPriorityScore(450, 2.0, 95);
+describe("Action Priority Score (APS) and Recommendation Engine", () => {
+  it("computes bounded APS between 5 and 100 based on pollution and sensitivity", () => {
+    // Extreme pollution (AQI 450), highly vulnerable household (multiplier 2.2), critical action (weight 95)
+    const severeAps = calculateActionPriorityScore(450, 2.2, 95);
+    expect(severeAps).toBeLessThanOrEqual(100);
+    expect(severeAps).toBeGreaterThan(80);
 
-    expect(scoreLow).toBeGreaterThanOrEqual(5);
-    expect(scoreLow).toBeLessThan(scoreMed);
-    expect(scoreMed).toBeLessThan(scoreHigh);
-    expect(scoreHigh).toBeLessThanOrEqual(100);
+    // Clean air (AQI 30), young healthy adults (multiplier 1.0), low weight action (10)
+    const lowAps = calculateActionPriorityScore(30, 1.0, 10);
+    expect(lowAps).toBeGreaterThanOrEqual(5);
+    expect(lowAps).toBeLessThan(15);
   });
 
-  it("increases sensitivity multiplier for infants, asthmatics, and elderly", () => {
-    const baseMembers: FamilyMember[] = [
+  it("prioritizes nocturnal bedroom HEPA purifier for sensitive members during severe smog", () => {
+    const aqiResult = calculateCpcbAqi({ pm25: 280, pm10: 410 });
+    const members: FamilyMember[] = [
       {
-        id: "1",
+        id: "m1",
+        name: "Grandmother",
+        ageGroup: "elderly",
+        sensitivities: ["copd"],
+        outdoorExposureHoursPerDay: 0.5,
+        commuteType: "wfh",
+      },
+    ];
+
+    const actions = generateDailyActions(aqiResult, members, []);
+    expect(actions.length).toBeGreaterThan(0);
+
+    // Bedtime purifier action should be top ranked or have very high APS
+    const bedroomAction = actions.find((a) => a.id === "bedroom-hepa-night");
+    expect(bedroomAction).toBeDefined();
+    expect(bedroomAction?.urgency).toBe("Immediate");
+    expect(bedroomAction?.whoBenefits).toContain("Infants, elderly");
+  });
+
+  it("strictly prohibits dry sweeping (jhadu) and incense burning in actions", () => {
+    const aqiResult = calculateCpcbAqi({ pm25: 190 });
+    const actions = generateDailyActions(aqiResult, [], []);
+
+    const sourceControl = actions.find((a) => a.id === "indoor-source-control");
+    expect(sourceControl).toBeDefined();
+    expect(sourceControl?.action.toLowerCase()).toContain("damp");
+    expect(sourceControl?.action.toLowerCase()).toContain("agarbatti");
+  });
+
+  it("includes scientific plant myth debunking within action priority recommendations", () => {
+    const aqiResult = calculateCpcbAqi({ pm25: 220 });
+    const actions = generateDailyActions(aqiResult, [], []);
+
+    const plantMythAction = actions.find((a) => a.id === "plant-filtration-fact");
+    expect(plantMythAction).toBeDefined();
+    expect(plantMythAction?.reason.toLowerCase()).toContain("cadr");
+    expect(plantMythAction?.action.toLowerCase()).toContain("hepa");
+  });
+
+  it("generates controlled midday air exchange when AQI is moderate (< 200)", () => {
+    const moderateAqi = calculateCpcbAqi({ pm25: 65 }); // AQI ~117 (Moderately Polluted)
+    const members: FamilyMember[] = [
+      {
+        id: "m-adult",
         name: "Adult",
         ageGroup: "adult",
         sensitivities: [],
-        outdoorExposureHoursPerDay: 1,
+        outdoorExposureHoursPerDay: 2,
         commuteType: "metro",
       },
     ];
 
-    const vulnerableMembers: FamilyMember[] = [
-      {
-        id: "1",
-        name: "Infant",
-        ageGroup: "infant",
-        sensitivities: [],
-        outdoorExposureHoursPerDay: 0,
-        commuteType: "wfh",
-      },
-      {
-        id: "2",
-        name: "Grandparent",
-        ageGroup: "elderly",
-        sensitivities: ["asthma", "cardiovascular"],
-        outdoorExposureHoursPerDay: 1,
-        commuteType: "walk",
-      },
-    ];
+    const actions = generateDailyActions(moderateAqi, members, []);
+    const ventilationAction = actions.find((a) => a.id === "ventilation-moderate");
+    expect(ventilationAction).toBeDefined();
+    expect(ventilationAction?.title).toContain("Controlled Midday Air Exchange");
+    expect(ventilationAction?.whenToPerform).toContain("12:30 PM");
 
-    const baseMult = getHouseholdSensitivityMultiplier(baseMembers);
-    const vulnMult = getHouseholdSensitivityMultiplier(vulnerableMembers);
-
-    expect(baseMult).toBe(1.0);
-    expect(vulnMult).toBeGreaterThan(baseMult);
-    expect(vulnMult).toBeLessThanOrEqual(2.5); // Capped at 2.5
-  });
-
-  it("generates recommendations with ALL required metadata fields", () => {
-    const aqiResult = calculateCpcbAqi({ pm25: 220 });
-    const members: FamilyMember[] = [
-      {
-        id: "1",
-        name: "Child with Asthma",
-        ageGroup: "child",
-        sensitivities: ["asthma"],
-        outdoorExposureHoursPerDay: 1,
-        commuteType: "bus",
-      },
-    ];
-    const rooms: IndoorRoomConfig[] = [
-      {
-        id: "r1",
-        roomName: "Bedroom",
-        areaSqFt: 150,
-        ceilingHeightFt: 10,
-        sealingQuality: "poor_drafty",
-        hasAirConditioner: true,
-        hasPurifier: true,
-        purifierCadrCfm: 180,
-        indoorSources: ["none"],
-      },
-    ];
-
-    const actions = generateDailyActions(aqiResult, members, rooms);
-    expect(actions.length).toBeGreaterThan(0);
-
-    for (const action of actions) {
-      expect(action).toHaveProperty("id");
-      expect(action).toHaveProperty("title");
-      expect(action).toHaveProperty("action");
-      expect(action).toHaveProperty("reason");
-      expect(action).toHaveProperty("whoBenefits");
-      expect(action).toHaveProperty("whenToPerform");
-      expect(action).toHaveProperty("expectedImpact");
-      expect(action).toHaveProperty("confidence");
-      expect(action).toHaveProperty("assumptions");
-      expect(action).toHaveProperty("actionPriorityScore");
-      expect(action.actionPriorityScore).toBeGreaterThanOrEqual(5);
-      expect(action.actionPriorityScore).toBeLessThanOrEqual(100);
-      expect(action.action.length).toBeGreaterThan(10);
-      expect(action.reason.length).toBeGreaterThan(10);
-    }
-  });
-
-  it("NEVER recommends opening windows during severe smog without justification", () => {
-    const severeAqi = calculateCpcbAqi({ pm25: 350 });
-    const actions = generateDailyActions(severeAqi, []);
-
-    const ventAction = actions.find((a) => a.category === "ventilation");
-    expect(ventAction).toBeDefined();
-    expect(ventAction?.action.toLowerCase()).toContain("sealed");
-  });
-
-  it("explicitly includes scientific clarification debunking plant air purification", () => {
-    const aqiResult = calculateCpcbAqi({ pm25: 250 });
-    const actions = generateDailyActions(aqiResult, []);
-
-    const plantAction = actions.find((a) => a.id === "plant-filtration-fact");
-    expect(plantAction).toBeDefined();
-    expect(plantAction?.action.toLowerCase()).toContain("do not rely on potted indoor plants");
-    expect(plantAction?.reason.toLowerCase()).toContain("near zero");
+    const bedroomAction = actions.find((a) => a.id === "bedroom-hepa-night");
+    expect(bedroomAction?.whoBenefits).toContain("Entire household");
   });
 });

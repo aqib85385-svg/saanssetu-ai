@@ -45,6 +45,7 @@ describe("CADR and Air Purifier Engine", () => {
     expect(res.currentAchWithPurifier).toBe(1.2);
     expect(res.status).toBe("insufficient");
     expect(res.recommendations.some((r) => r.includes("below"))).toBe(true);
+    expect(res.recommendations.some((r) => r.includes("weatherstrip"))).toBe(true);
   });
 
   it("handles rooms with no purifier installed", () => {
@@ -65,5 +66,24 @@ describe("CADR and Air Purifier Engine", () => {
     expect(res.budgetOptions.length).toBeGreaterThanOrEqual(3);
     // Verifies budget DIY box fan option is present
     expect(res.budgetOptions.some((b) => b.name.includes("DIY"))).toBe(true);
+  });
+
+  it("evaluates adequate purifier status and well-sealed weatherstripped room", () => {
+    const room: IndoorRoomConfig = {
+      id: "room-4",
+      roomName: "Guest Room",
+      areaSqFt: 200,
+      ceilingHeightFt: 10, // 2000 cu ft
+      sealingQuality: "well_sealed_weatherstripped",
+      hasAirConditioner: true,
+      hasPurifier: true,
+      purifierCadrCfm: 100, // 100 * 60 / 2000 = 3.0 ACH (>= 2.5 and < 4.5 -> "adequate")
+      indoorSources: ["agarbatti"],
+    };
+
+    const res = calculateRoomCadr(room, 4.5);
+    expect(res.status).toBe("adequate");
+    expect(res.currentAchWithPurifier).toBe(3);
+    expect(res.recommendations.some((r) => r.includes("incense/dhoop"))).toBe(true);
   });
 });

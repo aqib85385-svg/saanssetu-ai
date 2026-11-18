@@ -90,4 +90,39 @@ describe("Indoor Air Quality Model", () => {
     expect(res.hepaEffectivenessPercent).toBeLessThan(60);
     expect(res.keyMitigations.some((m) => m.includes("undersized"))).toBe(true);
   });
+
+  it("estimates indoor AQI brackets accurately for moderate particulate ranges", () => {
+    // Test room with average sealing and moderate ambient PM2.5 (e.g. 70 ug/m3 -> indoor ~40 ug/m3 -> bracket 31-60)
+    const moderateRoom: IndoorRoomConfig = {
+      id: "r6",
+      roomName: "Bedroom 2",
+      areaSqFt: 140,
+      ceilingHeightFt: 9.5,
+      sealingQuality: "average",
+      hasAirConditioner: false,
+      hasPurifier: false,
+      indoorSources: ["none"],
+    };
+
+    const resModerate = estimateIndoorAirQuality(moderateRoom, 130, 70);
+    expect(resModerate.estimatedIndoorPm25).toBeGreaterThanOrEqual(30);
+    expect(resModerate.estimatedIndoorPm25).toBeLessThanOrEqual(60);
+    expect(resModerate.estimatedIndoorAqi).toBeGreaterThan(50);
+    expect(resModerate.estimatedIndoorAqi).toBeLessThanOrEqual(100);
+
+    // Test room in bracket 91-120 ug/m3
+    const elevatedRoom: IndoorRoomConfig = {
+      id: "r7",
+      roomName: "Dining",
+      areaSqFt: 200,
+      ceilingHeightFt: 10,
+      sealingQuality: "poor_drafty",
+      hasAirConditioner: false,
+      hasPurifier: false,
+      indoorSources: ["none"],
+    };
+
+    const resElevated = estimateIndoorAirQuality(elevatedRoom, 220, 140);
+    expect(resElevated.estimatedIndoorAqi).toBeGreaterThanOrEqual(100);
+  });
 });

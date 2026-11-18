@@ -35,35 +35,51 @@ describe("Security, Input Validation & Rate Limiting", () => {
 });
 
 describe("Inversion & Routine Planner Logic", () => {
-  it("generates 4-phase daily routine plan with commute and ventilation guidance", () => {
-    const aqiResult = calculateCpcbAqi({ pm25: 240 });
-    const hourlyMock = [
-      {
-        time: "2026-11-19T06:00:00Z",
-        hourFormatted: "6 AM",
-        pm25: 310,
-        pm10: 420,
-        aqi: 380,
-        category: "Very Poor" as const,
-        isObservation: true,
-      },
-      {
-        time: "2026-11-19T13:00:00Z",
-        hourFormatted: "1 PM",
-        pm25: 160,
-        pm10: 240,
-        aqi: 220,
-        category: "Poor" as const,
-        isObservation: false,
-      },
-    ];
-
-    const assessment = computeActivityWindows(hourlyMock);
+  it("generates 4-phase daily routine plan for severe smog (AQI 380)", () => {
+    const aqiResult = calculateCpcbAqi({ pm25: 240 }); // AQI ~390
+    const assessment = computeActivityWindows([]);
     const plan = planDailyRoutine(aqiResult, [], assessment);
 
-    expect(plan.commuteGuidance.protectiveEquipment).toContain("N95");
+    expect(plan.commuteGuidance.recommendedWindow).toContain("10:30 AM");
+    expect(plan.commuteGuidance.protectiveEquipment).toContain("Mandatory airtight N95");
+    expect(plan.commuteGuidance.routeAdvice).toContain("Recirculation");
     expect(plan.exerciseGuidance.canExerciseOutdoors).toBe(false);
     expect(plan.exerciseGuidance.indoorAlternative).toContain("indoor");
     expect(plan.ventilationPlan.canOpenWindows).toBe(false);
+  });
+
+  it("generates 4-phase daily routine plan for clean/satisfactory air (AQI 80)", () => {
+    const aqiResult = calculateCpcbAqi({ pm25: 25 }); // AQI ~42 (Good)
+    const assessment = computeActivityWindows([]);
+    const plan = planDailyRoutine(aqiResult, [], assessment);
+
+    expect(plan.commuteGuidance.recommendedWindow).toContain("Standard transit hours");
+    expect(plan.commuteGuidance.protectiveEquipment).toContain("Standard comfort gear");
+    expect(plan.exerciseGuidance.canExerciseOutdoors).toBe(true);
+    expect(plan.exerciseGuidance.indoorAlternative).toContain("Light outdoor jogging");
+    expect(plan.exerciseGuidance.bestWindow).toBeDefined();
+    expect(plan.ventilationPlan.canOpenWindows).toBe(true);
+    expect(plan.ventilationPlan.durationMinutes).toBe(20);
+  });
+
+  it("generates 4-phase daily routine plan for moderate air (AQI 160)", () => {
+    const aqiResult = calculateCpcbAqi({ pm25: 75 }); // AQI ~150
+    const assessment = computeActivityWindows([]);
+    const plan = planDailyRoutine(aqiResult, [], assessment);
+
+    expect(plan.commuteGuidance.protectiveEquipment).toContain("N95 mask recommended");
+    expect(plan.exerciseGuidance.canExerciseOutdoors).toBe(true); // <= 150
+    expect(plan.ventilationPlan.canOpenWindows).toBe(true); // < 180
+  });
+
+  it("generates 4-phase daily routine plan for poor air (AQI 220)", () => {
+    const aqiResult = calculateCpcbAqi({ pm25: 110 }); // AQI ~267
+    const assessment = computeActivityWindows([]);
+    const plan = planDailyRoutine(aqiResult, [], assessment);
+
+    expect(plan.commuteGuidance.recommendedWindow).toContain("Standard transit hours"); // <= 300
+    expect(plan.commuteGuidance.protectiveEquipment).toContain("N95");
+    expect(plan.exerciseGuidance.canExerciseOutdoors).toBe(false); // > 150
+    expect(plan.ventilationPlan.canOpenWindows).toBe(false); // >= 180
   });
 });

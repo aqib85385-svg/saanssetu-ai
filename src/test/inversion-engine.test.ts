@@ -50,5 +50,47 @@ describe("Diurnal Inversion and Activity Window Assessment", () => {
     expect(res.bestWindow.windowType).toBe("optimal");
     expect(res.canDoOutdoorCardio).toBe(true);
     expect(res.canKidsPlayOutdoors).toBe(true);
+    expect(res.summaryExplanation).toContain("AIR QUALITY ACCEPTABLE");
+  });
+
+  it("triggers Critical Smog Alert when minimum diurnal AQI exceeds 300", () => {
+    const mockSevereHourly: HourlyForecastItem[] = Array.from({ length: 24 }, (_, i) => {
+      const isMidday = i >= 12 && i <= 15;
+      const aqi = isMidday ? 320 : 450;
+      return {
+        time: `2026-11-19T${i.toString().padStart(2, "0")}:00:00Z`,
+        hourFormatted: `${i % 12 || 12} ${i < 12 ? "AM" : "PM"}`,
+        pm25: Math.round(aqi * 0.75),
+        pm10: Math.round(aqi * 1.1),
+        aqi,
+        category: "Severe",
+        isObservation: i === 0,
+      };
+    });
+
+    const res = computeActivityWindows(mockSevereHourly);
+    expect(res.summaryExplanation).toContain("CRITICAL SMOG ALERT");
+    expect(res.bestWindow.windowType).toBe("dangerous");
+  });
+
+  it("identifies acceptable relative valley window when midday AQI is moderate (101-200)", () => {
+    const mockModerateHourly: HourlyForecastItem[] = Array.from({ length: 24 }, (_, i) => {
+      const isMidday = i >= 12 && i <= 15;
+      const aqi = isMidday ? 160 : 250;
+      return {
+        time: `2026-11-19T${i.toString().padStart(2, "0")}:00:00Z`,
+        hourFormatted: `${i % 12 || 12} ${i < 12 ? "AM" : "PM"}`,
+        pm25: 80,
+        pm10: 120,
+        aqi,
+        category: isMidday ? "Moderately Polluted" : "Poor",
+        isObservation: i === 0,
+      };
+    });
+
+    const res = computeActivityWindows(mockModerateHourly);
+    expect(res.bestWindow.windowType).toBe("acceptable");
+    expect(res.bestWindow.title).toContain("Relative Diurnal Valley Window");
+    expect(res.canKidsPlayOutdoors).toBe(false); // min AQI 160 > 150
   });
 });
