@@ -145,4 +145,42 @@ describe("Family Vulnerability & Health Risk Engine", () => {
     const householdMod = assessHouseholdRisk([modRiskMember], moderateAqi);
     expect(householdMod.highestRiskLevel).toBe("Moderate");
   });
+
+  it("handles healthy adults in moderate smog and clean air conditions", () => {
+    const moderateAqi = calculateCpcbAqi({ pm25: 65 }); // AQI ~117
+    const healthyAdult: FamilyMember = {
+      id: "mem-healthy",
+      name: "Amit",
+      ageGroup: "adult",
+      sensitivities: [],
+      outdoorExposureHoursPerDay: 1,
+      commuteType: "metro",
+    };
+
+    const modScore = assessMemberRisk(healthyAdult, moderateAqi);
+    expect(modScore.maskRecommendation).toBe("Cloth/Surgical ok");
+    expect(modScore.tailoredGuidance.some((g) => g.includes("Moderate smog"))).toBe(true);
+
+    const goodAqi = calculateCpcbAqi({ pm25: 15 }); // AQI ~25 (Good)
+    const cleanScore = assessMemberRisk(healthyAdult, goodAqi);
+    expect(cleanScore.maskRecommendation).toBe("None required");
+    expect(cleanScore.tailoredGuidance.some((g) => g.includes("Clean air"))).toBe(true);
+  });
+
+  it("handles empty household members array across different AQI tiers", () => {
+    const severeAqi = calculateCpcbAqi({ pm25: 250 }); // AQI > 300
+    const severeEmpty = assessHouseholdRisk([], severeAqi);
+    expect(severeEmpty.highestRiskLevel).toBe("High");
+    expect(severeEmpty.memberScores.length).toBe(0);
+    expect(severeEmpty.urgentWarnings.length).toBeGreaterThan(0);
+
+    const modAqi = calculateCpcbAqi({ pm25: 80 }); // AQI ~167
+    const modEmpty = assessHouseholdRisk([], modAqi);
+    expect(modEmpty.highestRiskLevel).toBe("Moderate");
+
+    const cleanAqi = calculateCpcbAqi({ pm25: 20 }); // AQI ~33
+    const cleanEmpty = assessHouseholdRisk([], cleanAqi);
+    expect(cleanEmpty.highestRiskLevel).toBe("Low");
+    expect(cleanEmpty.urgentWarnings.length).toBe(0);
+  });
 });

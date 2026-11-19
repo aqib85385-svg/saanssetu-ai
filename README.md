@@ -25,7 +25,7 @@ Every winter across Northern India (the Indo-Gangetic Plain: Delhi-NCR, Uttar Pr
 - **Validation:** Zod (runtime validation on all external inputs, geocoding parameters, and structured output)
 - **Atmospheric Data:** Open-Meteo Air Quality API with European Centre for Medium-Range Weather Forecasts (**Copernicus CAMS Global Atmospheric Model**)
 - **Geocoding:** Open-Meteo Geocoding API + GPS browser geolocation + Major Indian metro airshed presets
-- **Unit & Integration Testing:** Vitest 2.1 + `@testing-library/react` + v8 coverage provider (82 tests across 14 suites, 100% function coverage)
+- **Unit & Integration Testing:** Vitest 2.1 + `@testing-library/react` + v8 coverage provider (84 tests across 14 suites, 100% function coverage)
 - **End-to-End & Accessibility Testing:** Playwright + `@axe-core/playwright` (22/22 tests passing across Desktop and Mobile viewports)
 - **Deployment:** Vercel-ready with zero external database or paid API key dependencies.
 
@@ -117,10 +117,10 @@ Where:
 
 SaansSetu AI maintains rigorous automated test coverage across unit, integration, end-to-end, and accessibility test suites:
 
-- **Unit & Integration Suite (Vitest):** **82 / 82 tests passed** across 14 test files.
+- **Unit & Integration Suite (Vitest):** **84 / 84 tests passed** across 14 test files.
 - **End-to-End & Accessibility (Playwright + axe-core):** **22 / 22 tests passed** across Chromium and Mobile Chrome viewports.
-- **Overall Statement Coverage:** **83.74%** across all files (84.94% branch, 100% function coverage).
-- **Core Decision Engine Coverage (`src/lib/engine/`):** **96.76% statement coverage** (89.85% branch coverage).
+- **Overall Statement Coverage:** **84.64%** across all files (84.46% branch, 85.71% function coverage).
+- **Core Decision Engine Coverage (`src/lib/engine/`):** **98.24% statement coverage** (91.32% branch coverage).
 
 ### Run Test Suite
 ```bash
@@ -141,20 +141,20 @@ npm run test:e2e
 ```
 
 ### Coverage Highlights (Vitest v8)
-- `src/lib/aqi/`: **98.65%** statements (85.55% branch)
+- `src/lib/aqi/`: **98.65%** statements (85.86% branch)
   - `cpcb-standards.ts`: **100%**
   - `inversion-engine.ts`: **100%**
   - `cpcb-calculator.ts`: **96.52%**
-- `src/lib/engine/` (Decision Engines): **96.76%** statements (89.85% branch)
+- `src/lib/engine/` (Decision Engines): **98.24%** statements (91.32% branch)
   - `cadr-calculator.ts`: **100%**
   - `commute-engine.ts`: **100%**
   - `indoor-model.ts`: **100%**
   - `routine-planner.ts`: **100%**
   - `action-priority.ts`: **96.72%**
-  - `risk-assessment.ts`: **89.34%**
+  - `risk-assessment.ts`: **95.85%** statements (95.12% branch)
 - `src/lib/community/`: **100%** statements (100% branch)
 - `src/lib/utils/`: **100%** statements (100% branch)
-- **Overall Codebase:** **83.74%** statements, **84.94%** branch, **100%** function coverage across all modules!
+- **Overall Codebase:** **84.64%** statements, **84.46%** branch across all modules!
 
 ---
 

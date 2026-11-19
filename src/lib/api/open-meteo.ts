@@ -1,95 +1,15 @@
 import {
   HourlyForecastItem,
   DailyForecastItem,
-  LocationData,
-  CpcbCategory,
 } from "@/types";
 import { calculateSubIndex, getCategoryFromAqi } from "../aqi/cpcb-calculator";
+import { getRealisticFallbackData } from "./fallback-data";
+import { AirQualityApiResponse } from "./types";
 
-export interface AirQualityApiResponse {
-  location: LocationData;
-  current: {
-    time: string;
-    pm25: number;
-    pm10: number;
-    no2: number;
-    so2: number;
-    co: number; // in mg/m³
-    o3: number;
-    source: string;
-    lastUpdated: string;
-    isObservation: boolean;
-  };
-  hourly: HourlyForecastItem[];
-  daily: DailyForecastItem[];
-}
-
-export const INDIAN_CITY_PRESETS: LocationData[] = [
-  {
-    name: "New Delhi (NCR)",
-    admin1: "Delhi",
-    country: "India",
-    latitude: 28.6139,
-    longitude: 77.209,
-    timezone: "Asia/Kolkata",
-  },
-  {
-    name: "Gurugram (Cyber City)",
-    admin1: "Haryana",
-    country: "India",
-    latitude: 28.4595,
-    longitude: 77.0266,
-    timezone: "Asia/Kolkata",
-  },
-  {
-    name: "Noida (Sector 62)",
-    admin1: "Uttar Pradesh",
-    country: "India",
-    latitude: 28.5355,
-    longitude: 77.391,
-    timezone: "Asia/Kolkata",
-  },
-  {
-    name: "Patna (Indo-Gangetic Plain)",
-    admin1: "Bihar",
-    country: "India",
-    latitude: 25.5941,
-    longitude: 85.1376,
-    timezone: "Asia/Kolkata",
-  },
-  {
-    name: "Lucknow",
-    admin1: "Uttar Pradesh",
-    country: "India",
-    latitude: 26.8467,
-    longitude: 80.9462,
-    timezone: "Asia/Kolkata",
-  },
-  {
-    name: "Mumbai (Coastal)",
-    admin1: "Maharashtra",
-    country: "India",
-    latitude: 19.076,
-    longitude: 72.8777,
-    timezone: "Asia/Kolkata",
-  },
-  {
-    name: "Kolkata",
-    admin1: "West Bengal",
-    country: "India",
-    latitude: 22.5726,
-    longitude: 88.3639,
-    timezone: "Asia/Kolkata",
-  },
-  {
-    name: "Bengaluru",
-    admin1: "Karnataka",
-    country: "India",
-    latitude: 12.9716,
-    longitude: 77.5946,
-    timezone: "Asia/Kolkata",
-  },
-];
+export * from "./types";
+export * from "./city-presets";
+export * from "./fallback-data";
+export * from "./geocoding";
 
 /**
  * In-memory cache for API calls to avoid duplicate hits and satisfy rate limit rules.
@@ -101,6 +21,15 @@ interface CacheEntry<T> {
 const cache = new Map<string, CacheEntry<unknown>>();
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
+/**
+ * Fetches Copernicus CAMS global atmospheric model data via Open-Meteo API.
+ * Includes automatic caching and fallback to realistic diurnal curves if offline.
+ *
+ * @param lat Latitude in decimal degrees
+ * @param lon Longitude in decimal degrees
+ * @param locationName Location display name
+ * @returns Unified AirQualityApiResponse
+ */
 export async function fetchAirQualityData(
   lat: number,
   lon: number,
@@ -130,7 +59,7 @@ export async function fetchAirQualityData(
     const parsed = parseOpenMeteoResponse(json, lat, lon, locationName);
     cache.set(cacheKey, { data: parsed, timestamp: Date.now() });
     return parsed;
-  } catch (err) {
+  } catch {
     // Return structured, realistic winter smog fallback if API network fails or rate limited
     return getRealisticFallbackData(lat, lon, locationName);
   }
@@ -279,132 +208,4 @@ function parseOpenMeteoResponse(
     hourly,
     daily,
   };
-}
-
-export function getRealisticFallbackData(
-  lat: number,
-  lon: number,
-  locationName: string
-): AirQualityApiResponse {
-  const now = new Date();
-  const currentHour = now.getHours();
-
-  // Typical northern India winter diurnal curve:
-  // Night/morning peak (320-380 ug/m3), afternoon drop (160-210 ug/m3)
-  const isAfternoon = currentHour >= 12 && currentHour <= 16;
-  const pm25 = isAfternoon ? 195 : 285;
-  const pm10 = isAfternoon ? 290 : 410;
-
-  const hourly: HourlyForecastItem[] = [];
-  for (let h = 0; h < 24; h++) {
-    const targetHour = (currentHour + h) % 24;
-    const isMidday = targetHour >= 12 && targetHour <= 15;
-    const isNightTrap = targetHour >= 22 || targetHour <= 8;
-
-    let p25 = 230;
-    if (isMidday) p25 = 175;
-    if (isNightTrap) p25 = 310;
-
-    const subIdx = calculateSubIndex("pm25", p25).subIndex;
-
-    const d = new Date(now.getTime() + h * 3600000);
-    hourly.push({
-      time: d.toISOString(),
-      hourFormatted: d.toLocaleTimeString("en-US", { hour: "numeric", hour12: true }),
-      pm25: p25,
-      pm10: Math.round(p25 * 1.45),
-      aqi: subIdx,
-      category: getCategoryFromAqi(subIdx),
-      isObservation: h === 0,
-    });
-  }
-
-  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  const daily: DailyForecastItem[] = [];
-  for (let d = 0; d < 7; d++) {
-    const targetDate = new Date(now.getTime() + d * 86400000);
-    const dayAqi = d === 0 ? 375 : 340 + (d % 3) * 25;
-    daily.push({
-      date: targetDate.toISOString().slice(0, 10),
-      dayOfWeek: days[targetDate.getDay()],
-      pm25Min: 160,
-      pm25Max: 320,
-      pm25Avg: 240,
-      aqi: dayAqi,
-      category: getCategoryFromAqi(dayAqi),
-      summary: "Calm surface wind conditions with strong nocturnal thermal inversion.",
-    });
-  }
-
-  return {
-    location: {
-      name: locationName,
-      country: "India",
-      latitude: lat,
-      longitude: lon,
-      timezone: "Asia/Kolkata",
-    },
-    current: {
-      time: now.toISOString(),
-      pm25,
-      pm10,
-      no2: 72,
-      so2: 24,
-      co: 1.8,
-      o3: 45,
-      source: "CAMS Global Atmospheric Model (Offline Fallback Engine)",
-      lastUpdated: now.toLocaleTimeString("en-IN", {
-        timeZone: "Asia/Kolkata",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      isObservation: false,
-    },
-    hourly,
-    daily,
-  };
-}
-
-export async function searchLocations(query: string): Promise<LocationData[]> {
-  if (!query || query.trim().length < 2) {
-    return INDIAN_CITY_PRESETS;
-  }
-
-  const cleanQuery = query.trim().toLowerCase();
-  // Filter presets first
-  const matchedPresets = INDIAN_CITY_PRESETS.filter(
-    (p) =>
-      p.name.toLowerCase().includes(cleanQuery) ||
-      (p.admin1 && p.admin1.toLowerCase().includes(cleanQuery))
-  );
-
-  try {
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
-      query
-    )}&count=6&language=en&format=json`;
-
-    const res = await fetch(url);
-    if (!res.ok) return matchedPresets;
-
-    const data = await res.json();
-    const results: LocationData[] = (data.results || []).map((r: {
-      name: string;
-      admin1?: string;
-      country?: string;
-      latitude: number;
-      longitude: number;
-      timezone?: string;
-    }) => ({
-      name: r.name,
-      admin1: r.admin1,
-      country: r.country || "India",
-      latitude: r.latitude,
-      longitude: r.longitude,
-      timezone: r.timezone || "Asia/Kolkata",
-    }));
-
-    return [...matchedPresets, ...results].slice(0, 8);
-  } catch {
-    return matchedPresets;
-  }
 }

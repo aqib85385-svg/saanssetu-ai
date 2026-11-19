@@ -1,45 +1,52 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { AiChatResponse, ActionCard } from "@/lib/gemini/schemas";
+import { AiChatResponse } from "@/lib/gemini/schemas";
 import { CpcbAqiResult, FamilyMember, LocationData } from "@/types";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import {
-  Sparkles,
-  Send,
-  Bot,
-  User,
-  ShieldCheck,
-  CheckCircle2,
-  HelpCircle,
-  AlertCircle,
-  RotateCcw,
-} from "lucide-react";
+import { Sparkles, ShieldCheck } from "lucide-react";
+import { ChatMessageItem, ChatMessageList } from "./ChatMessageList";
+import { ChatInputBar } from "./ChatInputBar";
 
-interface MessageItem {
-  id: string;
-  sender: "user" | "assistant";
-  text: string;
-  structuredData?: AiChatResponse;
-  timestamp: string;
-}
-
-interface GeminiAssistantProps {
+/**
+ * Props for GeminiAssistant component.
+ */
+export interface GeminiAssistantProps {
+  /** Active CPCB AQI result for current selected city */
   aqiResult: CpcbAqiResult;
+  /** Geocoded location data */
   currentLocation: LocationData;
+  /** Household member profiles for personalization context */
   members: FamilyMember[];
+  /** UI language ('en' | 'hi') */
   language: "en" | "hi";
 }
 
+const PROMPT_CHIPS_HI = [
+  "क्या मुझे बाहर जाते समय N95 मास्क पहनना चाहिए?",
+  "क्या सुबह की सैर (morning walk) पर जाना सुरक्षित है?",
+  "घर की खिड़कियां किस समय खोलनी चाहिए?",
+  "क्या पौधे (indoor plants) हवा साफ कर सकते हैं?",
+];
+
+const PROMPT_CHIPS_EN = [
+  "Should I wear an N95 mask outside today?",
+  "Is an early morning walk safe in this smog?",
+  "When is the safest time to ventilate our home?",
+  "Do indoor houseplants really clean PM2.5?",
+];
+
+/**
+ * Conversational Environmental AI assistant interface anchored to live aerosol physics
+ * and personalized household health profiles.
+ */
 export function GeminiAssistant({
   aqiResult,
   currentLocation,
   members,
   language,
 }: GeminiAssistantProps) {
-  const [messages, setMessages] = useState<MessageItem[]>([
+  const [messages, setMessages] = useState<ChatMessageItem[]>([
     {
       id: "initial-welcome",
       sender: "assistant",
@@ -55,19 +62,15 @@ export function GeminiAssistant({
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
   const handleSendMessage = async (queryText?: string) => {
     const textToSend = (queryText || inputQuery).trim();
     if (!textToSend || isLoading) return;
 
-    const userMsg: MessageItem = {
+    const userMsg: ChatMessageItem = {
       id: `usr_${Date.now()}`,
       sender: "user",
       text: textToSend,
@@ -109,7 +112,7 @@ export function GeminiAssistant({
 
       const data: AiChatResponse = await res.json();
 
-      const assistantMsg: MessageItem = {
+      const assistantMsg: ChatMessageItem = {
         id: `ast_${Date.now()}`,
         sender: "assistant",
         text: data.reply,
@@ -119,8 +122,7 @@ export function GeminiAssistant({
 
       setMessages((prev) => [...prev, assistantMsg]);
     } catch {
-      // Fallback message
-      const errorMsg: MessageItem = {
+      const errorMsg: ChatMessageItem = {
         id: `err_${Date.now()}`,
         sender: "assistant",
         text:
@@ -135,20 +137,7 @@ export function GeminiAssistant({
     }
   };
 
-  const promptChips =
-    language === "hi"
-      ? [
-          "क्या मुझे बाहर जाते समय N95 मास्क पहनना चाहिए?",
-          "क्या सुबह की सैर (morning walk) पर जाना सुरक्षित है?",
-          "घर की खिड़कियां किस समय खोलनी चाहिए?",
-          "क्या पौधे (indoor plants) हवा साफ कर सकते हैं?",
-        ]
-      : [
-          "Should I wear an N95 mask outside today?",
-          "Is an early morning walk safe in this smog?",
-          "When is the safest time to ventilate our home?",
-          "Do indoor houseplants really clean PM2.5?",
-        ];
+  const promptChips = language === "hi" ? PROMPT_CHIPS_HI : PROMPT_CHIPS_EN;
 
   return (
     <div className="space-y-4">
@@ -175,162 +164,22 @@ export function GeminiAssistant({
 
       {/* Main Chat Window */}
       <Card className="p-0 overflow-hidden border-stone-200 shadow-card flex flex-col h-[600px]">
-        {/* Messages Scroll Area */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-stone-50/40">
-          {messages.map((msg) => {
-            const isUser = msg.sender === "user";
-            return (
-              <div
-                key={msg.id}
-                className={`flex gap-3 max-w-3xl ${isUser ? "ml-auto flex-row-reverse" : ""}`}
-              >
-                {/* Avatar */}
-                <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold ${
-                    isUser
-                      ? "bg-forest-900 text-white"
-                      : "bg-teal-700 text-teal-100 shadow-sm"
-                  }`}
-                >
-                  {isUser ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
-                </div>
+        <ChatMessageList
+          messages={messages}
+          isLoading={isLoading}
+          messagesEndRef={messagesEndRef}
+          onSelectSuggestion={(sug) => handleSendMessage(sug)}
+        />
 
-                {/* Message Bubble */}
-                <div
-                  className={`rounded-2xl p-4 text-xs sm:text-sm leading-relaxed ${
-                    isUser
-                      ? "bg-forest-900 text-white rounded-tr-none"
-                      : "bg-white border border-stone-200 text-stone-900 rounded-tl-none shadow-xs space-y-3"
-                  }`}
-                >
-                  {/* Markdown Reply */}
-                  <div className="whitespace-pre-wrap leading-relaxed">{msg.text}</div>
-
-                  {/* Structured Data: Key Takeaway */}
-                  {msg.structuredData?.keyTakeaway && (
-                    <div className="p-2.5 rounded-xl bg-teal-50 border border-teal-200/80 text-teal-950 font-medium text-xs">
-                      <span className="font-bold text-teal-800 uppercase text-[10px] block mb-0.5">
-                        Key Takeaway
-                      </span>
-                      {msg.structuredData.keyTakeaway}
-                    </div>
-                  )}
-
-                  {/* Structured Data: Action Cards */}
-                  {msg.structuredData?.actionCards &&
-                    msg.structuredData.actionCards.length > 0 && (
-                      <div className="space-y-2 pt-2 border-t border-stone-100">
-                        {msg.structuredData.actionCards.map((card, idx) => (
-                          <div
-                            key={idx}
-                            className="p-3 rounded-xl bg-ivory-50/90 border border-stone-200 space-y-1.5 text-xs text-stone-800"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-serif font-bold text-forest-950">
-                                {card.title}
-                              </span>
-                              <Badge variant="teal" className="text-[10px]">
-                                {card.whenToPerform}
-                              </Badge>
-                            </div>
-                            <p className="font-medium text-stone-900">{card.action}</p>
-                            <div className="text-[11px] text-stone-500 pt-1 border-t border-stone-200/60">
-                              <span className="font-semibold text-stone-700">Reason:</span>{" "}
-                              {card.reason}
-                            </div>
-                            <div className="text-[11px] text-emerald-800">
-                              <span className="font-semibold">Expected Impact:</span>{" "}
-                              {card.expectedImpact}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                  {/* Follow-up Question Chips */}
-                  {msg.structuredData?.followUpSuggestions && (
-                    <div className="pt-2 border-t border-stone-100 space-y-1">
-                      <span className="text-[10px] font-semibold text-stone-600 uppercase tracking-wider block">
-                        Suggested Follow-Ups:
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {msg.structuredData.followUpSuggestions.map((sug, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => handleSendMessage(sug)}
-                            className="text-[11px] px-2.5 py-1 rounded-lg bg-stone-100 hover:bg-forest-100 hover:text-forest-950 text-stone-700 transition-colors text-left"
-                          >
-                            → {sug}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="text-[10px] opacity-60 text-right pt-1">{msg.timestamp}</div>
-                </div>
-              </div>
-            );
-          })}
-
-          {isLoading && (
-            <div className="flex gap-3 max-w-lg">
-              <div className="w-8 h-8 rounded-xl bg-teal-700 text-white flex items-center justify-center shrink-0">
-                <Bot className="w-4 h-4" />
-              </div>
-              <div className="bg-white border border-stone-200 rounded-2xl rounded-tl-none p-3.5 text-xs text-stone-500 flex items-center gap-2 shadow-xs">
-                <Sparkles className="w-4 h-4 text-teal-600 animate-spin" />
-                <span>Evaluating aerosol models & grounding guidance...</span>
-              </div>
-            </div>
-          )}
-
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Prompt Chips Bar */}
-        <div className="p-2.5 bg-white border-t border-stone-100 overflow-x-auto flex gap-1.5 scrollbar-none">
-          {promptChips.map((chip, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleSendMessage(chip)}
-              className="text-xs px-3 py-1.5 rounded-full bg-ivory-100 hover:bg-ivory-200 text-forest-950 font-medium whitespace-nowrap border border-stone-200/80 transition-colors"
-            >
-              {chip}
-            </button>
-          ))}
-        </div>
-
-        {/* Query Input Box */}
-        <div className="p-3 bg-white border-t border-stone-200">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendMessage();
-            }}
-            className="flex items-center gap-2"
-          >
-            <input
-              type="text"
-              value={inputQuery}
-              onChange={(e) => setInputQuery(e.target.value)}
-              placeholder={
-                language === "hi"
-                  ? "स्मॉग, वेंटिलेशन या स्वास्थ्य के बारे में पूछें..."
-                  : "Ask about N95 masks, CADR sizing, bedroom sealing, morning walk..."
-              }
-              className="flex-1 px-4 py-2.5 rounded-xl border border-stone-300 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-forest-600 focus:border-transparent text-stone-900"
-            />
-            <Button
-              type="submit"
-              disabled={isLoading || !inputQuery.trim()}
-              size="md"
-              className="shrink-0"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
-          </form>
-        </div>
+        <ChatInputBar
+          inputQuery={inputQuery}
+          onChangeQuery={setInputQuery}
+          onSubmit={() => handleSendMessage()}
+          isLoading={isLoading}
+          promptChips={promptChips}
+          onSelectPrompt={(chip) => handleSendMessage(chip)}
+          language={language}
+        />
       </Card>
     </div>
   );

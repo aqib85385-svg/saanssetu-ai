@@ -1,3 +1,20 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": ["next/core-web-vitals"],
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "error",
+    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "complexity": ["error", 10],
+    "max-depth": ["error", 3],
+    "max-lines-per-function": ["warn", 80]
+  },
+  "overrides": [
+    {
+      "files": ["src/lib/aqi/**/*", "src/lib/engine/**/*", "src/lib/api/**/*", "src/test/**/*", "e2e/**/*"],
+      "rules": {
+        "complexity": "off",
+        "max-lines-per-function": "off"
+      }
+    }
+  ]
 }
