@@ -126,7 +126,7 @@ export function CommunityActionCenter({
           <Card className="p-6 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-stone-100">
               <div>
-                <span className="text-[10px] uppercase font-semibold text-stone-400 tracking-wider">
+                <span className="text-[10px] uppercase font-semibold text-stone-600 tracking-wider">
                   Target: {currentAdvisory.target}
                 </span>
                 <h3 className="font-serif font-bold text-lg text-forest-950">
@@ -234,7 +234,7 @@ export function CommunityActionCenter({
               {currentAdvisory.whatsappShareText}
             </div>
 
-            <div className="text-[11px] text-stone-400 text-center">
+            <div className="text-[11px] text-stone-600 font-medium text-center">
               Tap &apos;Copy Broadcast&apos; and paste directly into WhatsApp or Telegram.
             </div>
           </Card>

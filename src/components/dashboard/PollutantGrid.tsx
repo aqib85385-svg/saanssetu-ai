@@ -18,13 +18,13 @@ export function PollutantGrid({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="font-serif font-bold text-base text-forest-950 flex items-center gap-2">
+        <h2 className="font-serif font-bold text-base text-forest-950 flex items-center gap-2">
           <span>Multipollutant Sub-Indices</span>
           <span className="text-xs font-sans font-normal text-stone-500">
             (CPCB 24-hr Concentration Standard)
           </span>
-        </h4>
-        <span className="text-xs text-stone-400">
+        </h2>
+        <span className="text-xs text-stone-600 font-medium">
           Showing {pollutants.length} monitored pollutants
         </span>
       </div>
@@ -37,9 +37,8 @@ export function PollutantGrid({
           return (
             <Card
               key={item.code}
-              className={`p-3.5 transition-all duration-150 hover:shadow-card-hover ${
-                isHigh ? "border-amber-300/80 bg-amber-50/20" : ""
-              }`}
+              className={`p-3.5 transition-all duration-150 hover:shadow-card-hover ${isHigh ? "border-amber-300/80 bg-amber-50/20" : ""
+                }`}
             >
               <div className="flex items-center justify-between pb-1">
                 <span className="font-bold text-xs text-forest-950 uppercase tracking-wider">
@@ -57,7 +56,7 @@ export function PollutantGrid({
                 </div>
 
                 <div className="flex items-center justify-between text-xs pt-1 border-t border-stone-100">
-                  <span className="text-[11px] text-stone-400">Sub-Index:</span>
+                  <span className="text-[11px] text-stone-600 font-medium">Sub-Index:</span>
                   <span className={`font-mono font-semibold ${colors.text}`}>
                     {item.subIndex}
                   </span>
@@ -81,16 +80,16 @@ export function PollutantGrid({
         {missingPollutants.map((code) => (
           <Card key={code} className="p-3.5 bg-stone-50/80 border-dashed border-stone-300">
             <div className="flex items-center justify-between pb-1">
-              <span className="font-bold text-xs text-stone-400 uppercase tracking-wider">
+              <span className="font-bold text-xs text-stone-600 uppercase tracking-wider">
                 {code}
               </span>
-              <AlertCircle className="w-3.5 h-3.5 text-stone-300" />
+              <AlertCircle className="w-3.5 h-3.5 text-stone-500" />
             </div>
             <div className="mt-3 space-y-1 text-center">
-              <span className="text-xs text-stone-400 font-medium block">
+              <span className="text-xs text-stone-600 font-medium block">
                 Not Monitored
               </span>
-              <p className="text-[10px] text-stone-400">
+              <p className="text-[10px] text-stone-600 font-medium">
                 Station lacks sensor
               </p>
             </div>

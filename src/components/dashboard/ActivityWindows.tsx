@@ -17,10 +17,10 @@ export function ActivityWindows({ assessment }: ActivityWindowsProps) {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="font-serif font-bold text-base text-forest-950 flex items-center gap-2">
+          <h2 className="font-serif font-bold text-base text-forest-950 flex items-center gap-2">
             <Clock className="w-4 h-4 text-forest-700" />
             <span>Diurnal Activity Windows</span>
-          </h4>
+          </h2>
           <p className="text-xs text-stone-500">{summaryExplanation}</p>
         </div>
       </div>
@@ -35,9 +35,9 @@ export function ActivityWindows({ assessment }: ActivityWindowsProps) {
                 <span className="text-[11px] font-semibold uppercase text-emerald-800 tracking-wider">
                   Safest Outdoor Window
                 </span>
-                <h5 className="font-serif font-bold text-base text-forest-950">
+                <h3 className="font-serif font-bold text-base text-forest-950">
                   {bestWindow.title}
-                </h5>
+                </h3>
               </div>
             </div>
             <Badge variant="success" className="text-xs font-mono font-bold">
@@ -80,9 +80,9 @@ export function ActivityWindows({ assessment }: ActivityWindowsProps) {
                 <span className="text-[11px] font-semibold uppercase text-red-800 tracking-wider">
                   Hazardous Inversion Trap
                 </span>
-                <h5 className="font-serif font-bold text-base text-forest-950">
+                <h3 className="font-serif font-bold text-base text-forest-950">
                   {worstWindow.title}
-                </h5>
+                </h3>
               </div>
             </div>
             <Badge variant="danger" className="text-xs font-mono font-bold">

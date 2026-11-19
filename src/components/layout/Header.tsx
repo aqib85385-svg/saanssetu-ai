@@ -61,14 +61,14 @@ export function Header({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-serif font-bold text-xl tracking-tight text-forest-950">
+                <h1 className="font-serif font-bold text-xl tracking-tight text-forest-950 m-0 p-0 inline">
                   SaansSetu AI
-                </span>
+                </h1>
                 <span className="text-xs px-1.5 py-0.5 rounded bg-forest-100 text-forest-800 font-mono font-medium">
                   साँस सेतु
                 </span>
               </div>
-              <p className="text-[11px] text-stone-500 hidden sm:block">
+              <p className="text-[11px] text-stone-600 hidden sm:block">
                 Urban Smog & Air Intelligence for Indian Families
               </p>
             </div>
@@ -79,14 +79,14 @@ export function Header({
             {/* Location selector trigger */}
             <button
               onClick={onOpenLocationSearch}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-ivory-100 hover:bg-ivory-200 text-forest-900 border border-stone-200/80 transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium bg-ivory-100 hover:bg-ivory-200 text-forest-900 border border-stone-200/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forest-700"
               title="Change monitoring station or city"
             >
               <MapPin className="w-3.5 h-3.5 text-forest-600 shrink-0" />
               <span className="truncate max-w-[80px] sm:max-w-[180px] font-medium">
                 {currentLocation.name}
               </span>
-              <span className="text-[10px] text-stone-400 font-normal">Change</span>
+              <span className="text-[10px] text-stone-600 font-normal">Change</span>
             </button>
 
             {/* Live AQI Badge */}
@@ -100,8 +100,8 @@ export function Header({
             {/* Language toggle */}
             <button
               onClick={onLanguageToggle}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-stone-600 hover:text-forest-900 hover:bg-stone-100 border border-stone-200 transition-colors"
-              aria-label="Toggle language between English and Hindi"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-stone-700 hover:text-forest-900 hover:bg-stone-100 border border-stone-200 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forest-700"
+              aria-label={language === "en" ? "हिंदी - Switch to Hindi language" : "EN - Switch to English language"}
             >
               <Globe className="w-3.5 h-3.5 text-teal-700" />
               <span className="font-semibold">{language === "en" ? "हिंदी" : "EN"}</span>
@@ -111,8 +111,18 @@ export function Header({
 
         {/* Navigation Tabs Bar */}
         <nav
-          className="flex space-x-1 overflow-x-auto scrollbar-none py-1 border-t border-stone-100 text-xs sm:text-sm font-medium"
+          tabIndex={0}
           aria-label="Dashboard views"
+          className="flex space-x-1 overflow-x-auto scrollbar-none py-1 border-t border-stone-100 text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-forest-600/40 rounded-lg"
+          onKeyDown={(e) => {
+            if (e.target === e.currentTarget) {
+              if (e.key === "ArrowRight") {
+                e.currentTarget.scrollBy({ left: 60, behavior: "smooth" });
+              } else if (e.key === "ArrowLeft") {
+                e.currentTarget.scrollBy({ left: -60, behavior: "smooth" });
+              }
+            }
+          }}
         >
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
@@ -120,7 +130,7 @@ export function Header({
               <button
                 key={item.id}
                 onClick={() => onTabChange(item.id)}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg whitespace-nowrap transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg whitespace-nowrap transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-forest-700 focus-visible:ring-offset-1 ${
                   isActive
                     ? "bg-forest-900 text-white font-semibold shadow-sm"
                     : item.special

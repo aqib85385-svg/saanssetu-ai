@@ -250,7 +250,7 @@ export function GeminiAssistant({
                   {/* Follow-up Question Chips */}
                   {msg.structuredData?.followUpSuggestions && (
                     <div className="pt-2 border-t border-stone-100 space-y-1">
-                      <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block">
+                      <span className="text-[10px] font-semibold text-stone-600 uppercase tracking-wider block">
                         Suggested Follow-Ups:
                       </span>
                       <div className="flex flex-wrap gap-1.5">

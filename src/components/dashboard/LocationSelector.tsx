@@ -64,7 +64,8 @@ export function LocationSelector({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-stone-400 hover:text-stone-700 rounded-lg hover:bg-stone-100"
+            aria-label="Close dialog"
+            className="p-1.5 text-stone-500 hover:text-stone-800 rounded-lg hover:bg-stone-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-forest-700"
           >
             <X className="w-5 h-5" />
           </button>
@@ -88,7 +89,7 @@ export function LocationSelector({
         {/* Search input form */}
         <form onSubmit={handleSearch} className="mt-4">
           <div className="relative">
-            <Search className="absolute left-3.5 top-3 w-4 h-4 text-stone-400" />
+            <Search className="absolute left-3.5 top-3 w-4 h-4 text-stone-500" />
             <input
               type="text"
               value={searchQuery}
@@ -109,7 +110,7 @@ export function LocationSelector({
         {/* Dynamic Search Results */}
         {searchResults.length > 0 && (
           <div className="mt-4 border-t border-stone-100 pt-3">
-            <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-stone-600 uppercase tracking-wider">
               Search Results
             </span>
             <div className="mt-2 max-h-40 overflow-y-auto space-y-1">
@@ -126,7 +127,7 @@ export function LocationSelector({
                     <MapPin className="w-3.5 h-3.5 text-forest-600 shrink-0" />
                     <span>{loc.name}</span>
                     {loc.admin1 && (
-                      <span className="text-xs text-stone-400">({loc.admin1})</span>
+                      <span className="text-xs text-stone-600">({loc.admin1})</span>
                     )}
                   </div>
                   {currentLocation.name === loc.name && (
@@ -140,7 +141,7 @@ export function LocationSelector({
 
         {/* Major Indian Smog Metropolitan Presets */}
         <div className="mt-5 border-t border-stone-100 pt-4">
-          <span className="text-xs font-semibold text-stone-400 uppercase tracking-wider">
+          <span className="text-xs font-semibold text-stone-600 uppercase tracking-wider">
             Major Indian Airsheds & Metro Hubs
           </span>
           <div className="grid grid-cols-2 gap-2 mt-2">
@@ -161,7 +162,7 @@ export function LocationSelector({
                 >
                   <div className="truncate">
                     <p className="font-semibold truncate">{preset.name}</p>
-                    <p className={`text-[10px] ${isSelected ? "text-teal-200" : "text-stone-400"}`}>
+                    <p className={`text-[10px] ${isSelected ? "text-teal-200" : "text-stone-600 font-medium"}`}>
                       {preset.admin1 || preset.country}
                     </p>
                   </div>

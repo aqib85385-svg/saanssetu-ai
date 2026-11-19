@@ -323,8 +323,9 @@ export function FamilyProfileManager({
 
                   <button
                     onClick={() => handleRemoveMember(score.memberId)}
-                    className="text-stone-400 hover:text-red-600 p-1 rounded hover:bg-stone-100"
+                    className="text-stone-500 hover:text-red-600 p-1 rounded hover:bg-stone-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
                     title="Remove member"
+                    aria-label={`Remove member ${score.memberName}`}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

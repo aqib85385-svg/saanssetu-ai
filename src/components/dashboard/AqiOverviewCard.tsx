@@ -40,7 +40,7 @@ export function AqiOverviewCard({
         {/* Left: Main AQI Number and Category */}
         <div className="space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs uppercase tracking-wider font-semibold text-stone-400">
+            <span className="text-xs uppercase tracking-wider font-semibold text-stone-600">
               Indian CPCB NAQI
             </span>
             <Badge
@@ -79,7 +79,7 @@ export function AqiOverviewCard({
               {aqiResult.aqi}
             </span>
             <div className="space-y-1">
-              <p className="text-xs text-stone-400 uppercase font-medium">Primary Pollutant</p>
+              <p className="text-xs text-stone-600 uppercase font-medium">Primary Pollutant</p>
               <div className="flex items-center gap-1.5">
                 <span className="font-semibold text-stone-800 text-base">
                   {aqiResult.primaryPollutant}
@@ -95,7 +95,7 @@ export function AqiOverviewCard({
 
           {/* CPCB Scale Bar */}
           <div className="pt-2 max-w-md">
-            <div className="flex justify-between text-[10px] text-stone-400 pb-1">
+            <div className="flex justify-between text-[10px] text-stone-600 font-medium pb-1">
               <span>0 Good</span>
               <span>100 Mod</span>
               <span>200 Poor</span>
@@ -135,7 +135,7 @@ export function AqiOverviewCard({
           </div>
 
           <div className="pt-2 border-t border-stone-200/60">
-            <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider block mb-1">
+            <span className="text-[11px] font-semibold text-stone-600 uppercase tracking-wider block mb-1">
               Immediate Recommendation
             </span>
             <p className="text-xs text-forest-950 font-medium leading-relaxed">
@@ -144,13 +144,13 @@ export function AqiOverviewCard({
           </div>
 
           {/* Attribution & Timestamp Metadata */}
-          <div className="pt-2 border-t border-stone-200/60 flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-400">
+          <div className="pt-2 border-t border-stone-200/60 flex flex-wrap items-center justify-between gap-2 text-[11px] text-stone-600">
             <span className="flex items-center gap-1" title={source}>
-              <Database className="w-3 h-3 text-stone-400" />
+              <Database className="w-3 h-3 text-stone-500" />
               CAMS Global Data
             </span>
             <span className="flex items-center gap-1">
-              <Clock className="w-3 h-3 text-stone-400" />
+              <Clock className="w-3 h-3 text-stone-500" />
               Updated {lastUpdated}
             </span>
           </div>

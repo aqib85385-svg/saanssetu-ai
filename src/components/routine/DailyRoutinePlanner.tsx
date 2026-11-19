@@ -141,7 +141,7 @@ export function DailyRoutinePlanner({
       {/* Routine Action Cards List */}
       <div className="space-y-4">
         {currentActions.length === 0 ? (
-          <div className="p-8 text-center rounded-2xl bg-stone-50 text-stone-400 text-xs">
+          <div className="p-8 text-center rounded-2xl bg-stone-50 text-stone-600 text-xs font-medium">
             No specific actions scheduled for this time block. Standard precautions apply.
           </div>
         ) : (
@@ -162,7 +162,7 @@ export function DailyRoutinePlanner({
                   <Badge variant="teal" className="text-[11px] font-mono">
                     Priority Score: {action.actionPriorityScore}/100
                   </Badge>
-                  <span className="text-[11px] text-stone-400 font-medium">
+                  <span className="text-[11px] text-stone-600 font-medium">
                     {action.whenToPerform}
                   </span>
                 </div>
@@ -176,21 +176,21 @@ export function DailyRoutinePlanner({
               {/* Scientific Reason & Impact Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-1">
                 <div className="bg-ivory-50 p-2.5 rounded-xl border border-stone-200/60">
-                  <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block mb-0.5">
+                  <span className="text-[10px] font-semibold text-stone-600 uppercase tracking-wider block mb-0.5">
                     Why It Matters
                   </span>
                   <p className="text-stone-700 leading-snug">{action.reason}</p>
                 </div>
 
                 <div className="bg-ivory-50 p-2.5 rounded-xl border border-stone-200/60">
-                  <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block mb-0.5">
+                  <span className="text-[10px] font-semibold text-stone-600 uppercase tracking-wider block mb-0.5">
                     Who Benefits
                   </span>
                   <p className="text-stone-700 leading-snug">{action.whoBenefits}</p>
                 </div>
 
                 <div className="bg-ivory-50 p-2.5 rounded-xl border border-stone-200/60">
-                  <span className="text-[10px] font-semibold text-stone-400 uppercase tracking-wider block mb-0.5">
+                  <span className="text-[10px] font-semibold text-stone-600 uppercase tracking-wider block mb-0.5">
                     Expected Reduction
                   </span>
                   <p className="text-emerald-800 font-medium leading-snug">
@@ -200,7 +200,7 @@ export function DailyRoutinePlanner({
               </div>
 
               {/* Assumptions & Confidence */}
-              <div className="flex items-center justify-between text-[11px] text-stone-400 pt-1 border-t border-stone-100">
+              <div className="flex items-center justify-between text-[11px] text-stone-600 font-medium pt-1 border-t border-stone-100">
                 <span>Assumptions: {action.assumptions}</span>
                 <span className="font-mono">Confidence: {action.confidence}</span>
               </div>

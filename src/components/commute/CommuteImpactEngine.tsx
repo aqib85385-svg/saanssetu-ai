@@ -72,7 +72,7 @@ export function CommuteImpactEngine() {
               onChange={(e) => setDistanceKm(parseInt(e.target.value) || 10)}
               className="w-full accent-forest-900"
             />
-            <div className="flex justify-between text-[10px] text-stone-400 pt-0.5">
+            <div className="flex justify-between text-[10px] text-stone-600 font-medium pt-0.5">
               <span>2 km (Local)</span>
               <span>25 km (Suburban)</span>
               <span>50 km (NCR Cross)</span>
@@ -94,7 +94,7 @@ export function CommuteImpactEngine() {
               onChange={(e) => setWorkingDays(parseInt(e.target.value) || 5)}
               className="w-full accent-forest-900"
             />
-            <div className="flex justify-between text-[10px] text-stone-400 pt-0.5">
+            <div className="flex justify-between text-[10px] text-stone-600 font-medium pt-0.5">
               <span>1 day (Hybrid)</span>
               <span>5 days (Standard)</span>
               <span>6 days</span>
@@ -125,7 +125,7 @@ export function CommuteImpactEngine() {
         {/* Baseline Impact Readout */}
         <div className="pt-4 border-t border-stone-100 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
           <div className="bg-ivory-50 p-3 rounded-2xl border border-stone-200/60">
-            <span className="text-[10px] text-stone-400 uppercase font-semibold block">
+            <span className="text-[10px] text-stone-600 uppercase font-semibold block">
               Daily Travel
             </span>
             <span className="font-serif font-bold text-xl text-stone-900">
@@ -133,7 +133,7 @@ export function CommuteImpactEngine() {
             </span>
           </div>
           <div className="bg-ivory-50 p-3 rounded-2xl border border-stone-200/60">
-            <span className="text-[10px] text-stone-400 uppercase font-semibold block">
+            <span className="text-[10px] text-stone-600 uppercase font-semibold block">
               Baseline Daily CO2
             </span>
             <span className="font-serif font-bold text-xl text-rose-800">
@@ -141,7 +141,7 @@ export function CommuteImpactEngine() {
             </span>
           </div>
           <div className="bg-ivory-50 p-3 rounded-2xl border border-stone-200/60">
-            <span className="text-[10px] text-stone-400 uppercase font-semibold block">
+            <span className="text-[10px] text-stone-600 uppercase font-semibold block">
               Baseline Weekly CO2
             </span>
             <span className="font-serif font-bold text-xl text-rose-800">
@@ -149,7 +149,7 @@ export function CommuteImpactEngine() {
             </span>
           </div>
           <div className="bg-ivory-50 p-3 rounded-2xl border border-stone-200/60">
-            <span className="text-[10px] text-stone-400 uppercase font-semibold block">
+            <span className="text-[10px] text-stone-600 uppercase font-semibold block">
               Annual Footprint (48 wks)
             </span>
             <span className="font-serif font-bold text-xl text-rose-900">
@@ -200,25 +200,25 @@ export function CommuteImpactEngine() {
                   {/* Numbers Column */}
                   <div className="flex items-center gap-4 text-right shrink-0">
                     <div>
-                      <span className="text-[10px] text-stone-400 uppercase font-semibold block">
+                      <span className="text-[10px] text-stone-600 uppercase font-semibold block">
                         CO2 Avoided / Day
                       </span>
                       <span
                         className={`font-serif font-bold text-base ${
-                          isNegativeAvoidance ? "text-stone-400" : "text-emerald-700"
+                          isNegativeAvoidance ? "text-stone-500" : "text-emerald-700"
                         }`}
                       >
                         {isNegativeAvoidance
                           ? "Baseline"
                           : `+${item.co2AvoidedVsPrivateCarKg} kg`}
                       </span>
-                      <span className="text-[10px] text-stone-400 block">
+                      <span className="text-[10px] text-stone-600 font-medium block">
                         ({item.co2GramsPerKm} g/km)
                       </span>
                     </div>
 
                     <div className="min-w-[120px]">
-                      <span className="text-[10px] text-stone-400 uppercase font-semibold block">
+                      <span className="text-[10px] text-stone-600 uppercase font-semibold block">
                         Smog Inhalation
                       </span>
                       <Badge

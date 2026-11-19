@@ -64,7 +64,20 @@ export function DiurnalForecast({ hourly, daily }: DiurnalForecastProps) {
             </div>
 
             {/* Hourly horizontal scroll */}
-            <div className="flex gap-2.5 overflow-x-auto pb-3 pt-1 scrollbar-thin">
+            <div
+              tabIndex={0}
+              aria-label="Hourly diurnal air quality forecast timeline"
+              className="flex gap-2.5 overflow-x-auto pb-3 pt-1 scrollbar-thin focus:outline-none focus:ring-2 focus:ring-forest-600/40 rounded-2xl"
+              onKeyDown={(e) => {
+                if (e.target === e.currentTarget) {
+                  if (e.key === "ArrowRight") {
+                    e.currentTarget.scrollBy({ left: 80, behavior: "smooth" });
+                  } else if (e.key === "ArrowLeft") {
+                    e.currentTarget.scrollBy({ left: -80, behavior: "smooth" });
+                  }
+                }
+              }}
+            >
               {hourly.map((item, idx) => {
                 const colors = getAqiCategoryColor(item.category);
                 const isNight =
@@ -86,7 +99,7 @@ export function DiurnalForecast({ hourly, daily }: DiurnalForecastProps) {
                       {item.aqi}
                     </div>
 
-                    <div className="text-[10px] text-stone-400 font-mono">
+                    <div className="text-[10px] text-stone-600 font-mono">
                       {item.pm25} µg
                     </div>
 
@@ -113,7 +126,7 @@ export function DiurnalForecast({ hourly, daily }: DiurnalForecastProps) {
                     <span className="font-bold text-xs text-forest-950">
                       {day.dayOfWeek}
                     </span>
-                    <span className="text-[10px] text-stone-400">
+                    <span className="text-[10px] text-stone-600 font-medium">
                       {day.date.slice(5)}
                     </span>
                   </div>

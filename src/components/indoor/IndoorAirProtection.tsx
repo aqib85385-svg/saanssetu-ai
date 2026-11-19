@@ -134,7 +134,7 @@ export function IndoorAirProtection({
                 }
                 className="w-full accent-forest-900"
               />
-              <div className="flex justify-between text-[10px] text-stone-400 pt-0.5">
+              <div className="flex justify-between text-[10px] text-stone-600 font-medium pt-0.5">
                 <span>60 sq ft (Compact)</span>
                 <span>600 sq ft (Large Hall)</span>
               </div>
@@ -269,7 +269,7 @@ export function IndoorAirProtection({
           <Card className="p-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-100">
               <div>
-                <span className="text-xs uppercase tracking-wider font-semibold text-stone-400">
+                <span className="text-xs uppercase tracking-wider font-semibold text-stone-600">
                   Engineering CADR Assessment
                 </span>
                 <h3 className="font-serif font-bold text-xl text-forest-950">
@@ -294,49 +294,49 @@ export function IndoorAirProtection({
             {/* Key CADR Metrics Row */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 text-center">
               <div className="bg-ivory-50 p-3 rounded-2xl border border-stone-200/60">
-                <span className="text-[10px] text-stone-400 uppercase font-semibold block">
+                <span className="text-[10px] text-stone-600 uppercase font-semibold block">
                   Required CADR (4.5 ACH)
                 </span>
                 <span className="text-xl font-serif font-bold text-stone-900">
                   {cadrResult.requiredCadrCfm} CFM
                 </span>
-                <span className="text-[10px] text-stone-500 block">
+                <span className="text-[10px] text-stone-600 font-medium block">
                   ({cadrResult.requiredCadrM3h} m³/h)
                 </span>
               </div>
 
               <div className="bg-ivory-50 p-3 rounded-2xl border border-stone-200/60">
-                <span className="text-[10px] text-stone-400 uppercase font-semibold block">
+                <span className="text-[10px] text-stone-600 uppercase font-semibold block">
                   Current ACH Delivery
                 </span>
                 <span className="text-xl font-serif font-bold text-forest-900">
                   {cadrResult.currentAchWithPurifier} ACH
                 </span>
-                <span className="text-[10px] text-stone-500 block">
+                <span className="text-[10px] text-stone-600 font-medium block">
                   Target: 4.5+ ACH
                 </span>
               </div>
 
               <div className="bg-ivory-50 p-3 rounded-2xl border border-stone-200/60">
-                <span className="text-[10px] text-stone-400 uppercase font-semibold block">
+                <span className="text-[10px] text-stone-600 uppercase font-semibold block">
                   Est. Indoor PM2.5
                 </span>
                 <span className="text-xl font-serif font-bold text-emerald-800">
                   {indoorEstimate.estimatedIndoorPm25} µg/m³
                 </span>
-                <span className="text-[10px] text-stone-500 block">
+                <span className="text-[10px] text-stone-600 font-medium block">
                   vs {outdoorPm25} µg outdoor
                 </span>
               </div>
 
               <div className="bg-ivory-50 p-3 rounded-2xl border border-stone-200/60">
-                <span className="text-[10px] text-stone-400 uppercase font-semibold block">
+                <span className="text-[10px] text-stone-600 uppercase font-semibold block">
                   HEPA Cleaning Ratio
                 </span>
                 <span className="text-xl font-serif font-bold text-teal-800">
                   {indoorEstimate.hepaEffectivenessPercent}%
                 </span>
-                <span className="text-[10px] text-stone-500 block">
+                <span className="text-[10px] text-stone-600 font-medium block">
                   Particulate scrub rate
                 </span>
               </div>
@@ -360,7 +360,7 @@ export function IndoorAirProtection({
                 <DollarSign className="w-4 h-4 text-emerald-700" />
                 <span>Budget-Sensitive Purifier Sizing Options</span>
               </h4>
-              <span className="text-xs text-stone-400">
+              <span className="text-xs text-stone-600 font-medium">
                 For {selectedRoom.areaSqFt} sq ft space
               </span>
             </div>

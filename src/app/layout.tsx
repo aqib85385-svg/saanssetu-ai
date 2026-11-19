@@ -34,10 +34,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth">
-      <head>
-        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
-        <meta httpEquiv="X-Frame-Options" content="DENY" />
-      </head>
       <body className="min-h-screen bg-[#FAF9F6] text-[#1A2421] selection:bg-teal-200 selection:text-forest-950">
         {children}
       </body>
