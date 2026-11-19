@@ -115,7 +115,12 @@ Where:
 
 ## 6. Testing & Quality Assurance
 
-SaansSetu AI has automated test coverage across both unit/integration tests (Vitest) and end-to-end / accessibility tests (Playwright + axe-core).
+SaansSetu AI maintains rigorous automated test coverage across unit, integration, end-to-end, and accessibility test suites:
+
+- **Unit & Integration Suite (Vitest):** **82 / 82 tests passed** across 14 test files.
+- **End-to-End & Accessibility (Playwright + axe-core):** **22 / 22 tests passed** across Chromium and Mobile Chrome viewports.
+- **Overall Statement Coverage:** **83.74%** across all files (84.94% branch, 100% function coverage).
+- **Core Decision Engine Coverage (`src/lib/engine/`):** **96.76% statement coverage** (89.85% branch coverage).
 
 ### Run Test Suite
 ```bash
@@ -135,32 +140,34 @@ npm run build
 npm run test:e2e
 ```
 
-### Coverage Highlights
-- `src/lib/aqi/`: **98.07%** statements
+### Coverage Highlights (Vitest v8)
+- `src/lib/aqi/`: **98.65%** statements (85.55% branch)
   - `cpcb-standards.ts`: **100%**
-  - `cpcb-calculator.ts`: **97.03%**
-  - `inversion-engine.ts`: **97.00%**
-- `src/lib/engine/`: **94.07%** statements
-  - `cadr-calculator.ts`: **94.73%**
+  - `inversion-engine.ts`: **100%**
+  - `cpcb-calculator.ts`: **96.52%**
+- `src/lib/engine/` (Decision Engines): **96.76%** statements (89.85% branch)
+  - `cadr-calculator.ts`: **100%**
   - `commute-engine.ts`: **100%**
-  - `risk-assessment.ts`: **93.49%**
-  - `action-priority.ts`: **90.16%**
-  - `routine-planner.ts`: **90.00%**
-  - `indoor-model.ts`: **98.03%**
-- `src/lib/community/`: **100%** statements
-- `src/lib/utils/`: **100%** statements
-- **Deterministic Decision Engine Coverage:** **> 94% – 100%** across all pure modules!
+  - `indoor-model.ts`: **100%**
+  - `routine-planner.ts`: **100%**
+  - `action-priority.ts`: **96.72%**
+  - `risk-assessment.ts`: **89.34%**
+- `src/lib/community/`: **100%** statements (100% branch)
+- `src/lib/utils/`: **100%** statements (100% branch)
+- **Overall Codebase:** **83.74%** statements, **84.94%** branch, **100%** function coverage across all modules!
 
 ---
 
 ## 7. Getting Started
+
+- **Repository:** [https://github.com/aqib85385-svg/saanssetu-ai](https://github.com/aqib85385-svg/saanssetu-ai)
 
 ### Prerequisites
 - Node.js 18.x, 20.x, or 22.x+
 - npm 9+ (or yarn / pnpm)
 
 ### Instant Setup (No API Keys Required!)
-SaansSetu AI runs 100% out-of-the-box with zero paid API keys or signups:
+SaansSetu AI runs 100% out-of-the-box with zero paid API keys or signups. The core conversational assistant runs on the built-in context-aware deterministic intelligence engine:
 
 ```bash
 # Clone the repository
@@ -176,10 +183,32 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser. All live Open-Meteo atmospheric forecasts, CPCB AQI calculations, personalized family routines, CADR sizing, and the intelligent assistant are immediately active!
 
-*(Optional: If you wish to enable Google Gemini API mode, copy `.env.example` to `.env.local` and add `GEMINI_API_KEY`, but this is entirely optional.)*
+*(Optional: If you wish to enable Google Gemini API mode, copy `.env.example` to `.env.local` and add `GEMINI_API_KEY`, but this is entirely optional. The application works completely without it.)*
 
 ---
 
-## 8. Responsible Health & Medical Disclaimer
+## 8. Deployment Instructions
+
+SaansSetu AI is designed for seamless deployment on Vercel or any Node.js hosting platform with zero external database requirements:
+
+### Vercel Deployment (Recommended)
+1. Push your repository to GitHub (`https://github.com/aqib85385-svg/saanssetu-ai`).
+2. Import the project into the [Vercel Dashboard](https://vercel.com).
+3. Framework preset will automatically be detected as **Next.js**.
+4. No environment variables are required for deployment.
+5. Deploy. The application builds and serves via Vercel Edge/Serverless functions.
+
+### Self-Hosted Node.js Server
+```bash
+# Build production bundle
+npm run build
+
+# Start production server on port 3000
+npm run start
+```
+
+---
+
+## 9. Responsible Health & Medical Disclaimer
 
 SaansSetu AI provides preventive environmental exposure calculations based on published epidemiological studies and Central Pollution Control Board (CPCB) standards. It does NOT provide clinical medical diagnosis, treatment plans, or emergency services. If you or any family member experience acute breathlessness, severe coughing, chest tightness, or dizziness, seek immediate medical care from a qualified pulmonologist or hospital emergency room.
