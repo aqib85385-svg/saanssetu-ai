@@ -25,7 +25,7 @@ Every winter across Northern India (the Indo-Gangetic Plain: Delhi-NCR, Uttar Pr
 - **Validation:** Zod (runtime validation on all external inputs, geocoding parameters, and structured output)
 - **Atmospheric Data:** Open-Meteo Air Quality API with European Centre for Medium-Range Weather Forecasts (**Copernicus CAMS Global Atmospheric Model**)
 - **Geocoding:** Open-Meteo Geocoding API + GPS browser geolocation + Major Indian metro airshed presets
-- **Unit & Integration Testing:** Vitest 2.1 + `@testing-library/react` + v8 coverage provider (84 tests across 14 suites, 84.64% overall statement coverage, 100% core engine function coverage)
+- **Unit & Integration Testing:** Vitest 2.1 + `@testing-library/react` + v8 coverage provider (102 tests across 14 suites, 97.50% overall statement coverage, 100% function coverage)
 - **End-to-End & Accessibility Testing:** Playwright + `@axe-core/playwright` (22/22 tests passing across Desktop and Mobile viewports)
 - **Deployment:** Vercel-ready with zero external database or paid API key dependencies.
 
@@ -117,9 +117,9 @@ Where:
 
 SaansSetu AI maintains rigorous automated test coverage across unit, integration, end-to-end, and accessibility test suites:
 
-- **Unit & Integration Suite (Vitest):** **84 / 84 tests passed** across 14 test files.
+- **Unit & Integration Suite (Vitest):** **102 / 102 tests passed** across 14 test files.
 - **End-to-End & Accessibility (Playwright + axe-core):** **22 / 22 tests passed** across Chromium and Mobile Chrome viewports.
-- **Overall Statement Coverage:** **84.64%** across all files (84.28% branch, 85.71% function coverage).
+- **Overall Statement Coverage:** **97.50%** across all files (85.54% branch, 100% function coverage).
 - **Core Decision Engine Coverage (`src/lib/engine/`):** **98.24% statement coverage** (91.32% branch coverage).
 
 ### Run Test Suite
@@ -154,7 +154,7 @@ npm run test:e2e
   - `risk-assessment.ts`: **95.85%** statements (95.12% branch)
 - `src/lib/community/`: **100%** statements (100% branch)
 - `src/lib/utils/`: **100%** statements (100% branch)
-- **Overall Codebase:** **84.64%** statements, **84.28%** branch, **85.71%** functions across all modules!
+- **Overall Codebase:** **97.50%** statements, **85.54%** branch, **100%** functions across all modules!
 
 ---
 

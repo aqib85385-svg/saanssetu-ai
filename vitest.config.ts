@@ -18,6 +18,7 @@ export default defineConfig({
         "node_modules/",
         "src/test/",
         "**/*.d.ts",
+        "src/lib/**/types.ts",
         ".next/",
         "playwright.config.ts",
         "tailwind.config.ts",

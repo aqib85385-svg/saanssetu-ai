@@ -1,14 +1,14 @@
 import { AiChatResponse } from "../schemas";
 import { DomainContext } from "./types";
 
-function getHealthImpactHi(aqi: number): string {
+export function getHealthImpactHi(aqi: number): string {
   if (aqi > 400) return "गंभीर आपातकाल (Severe+): स्वस्थ व्यक्तियों के फेफड़ों को भी नुकसान पहुंचाता है और गंभीर रूप से प्रभावित करता है।";
   if (aqi > 300) return "अत्यधिक खराब (Very Poor): लंबे समय तक संपर्क में रहने पर श्वसन संबंधी बीमारियां उत्पन्न करता है।";
   if (aqi > 200) return "खराब (Poor): फेफड़े और हृदय रोग से पीड़ित लोगों को सांस लेने में भारी तकलीफ पैदा करता है।";
   return "मध्यम स्थिति: संवेदनशील लोगों को हल्की परेशानी हो सकती है।";
 }
 
-function getHealthImpactEn(aqi: number): string {
+export function getHealthImpactEn(aqi: number): string {
   if (aqi > 400) return "CRITICAL SMOG EMERGENCY (Severe+): Affects healthy individuals and acutely impacts those with existing respiratory or cardiovascular disease.";
   if (aqi > 300) return "VERY POOR: Causes respiratory illness to people on prolonged exposure; severe effect on sensitive groups.";
   if (aqi > 200) return "POOR: Breathing discomfort to people with lung disease (asthma, COPD) and heart disease.";
